@@ -133,14 +133,17 @@ def test_email_still_isolated():
     )
 
 
+PATTERN_TYPES = ["credit_card", "dob", "email", "ip", "phone", "ssn"]
+
+
 def test_card_beats_phone_on_a_shared_span():
-    engine = RedactionEngine(build())
+    engine = RedactionEngine(build(only=PATTERN_TYPES))
     labels = [d.label for d in engine.detect("Card: 4532 0151 1283 0366")]
     assert labels == ["CREDIT_CARD"]
 
 
 def test_all_types_in_one_pass():
-    engine = RedactionEngine(build())
+    engine = RedactionEngine(build(only=PATTERN_TYPES))
     text = (
         "Name: John Doe, Email: john.doe@example.com, Telephone: +91 22 4009 4400, "
         "DOB: 14/08/2000, SSN: 123-45-6789, Card: 4532-0151-1283-0366, IP: 192.168.1.100"
@@ -155,15 +158,8 @@ def test_all_types_in_one_pass():
     ]
 
 
-def test_registry_holds_every_phase_three_type():
-    assert {r.name for r in build()} == {
-        "credit_card",
-        "dob",
-        "email",
-        "ip",
-        "phone",
-        "ssn",
-    }
+def test_registry_holds_every_pattern_type():
+    assert {r.name for r in build()} >= set(PATTERN_TYPES)
 
 
 if __name__ == "__main__":

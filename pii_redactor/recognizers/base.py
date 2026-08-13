@@ -21,12 +21,14 @@ class Recognizer(ABC):
     def find(self, text: str):
         """Yield Detections for `text`."""
 
-    def detection(self, start: int, end: int, text: str, score: float = 1.0) -> Detection:
+    def detection(
+        self, start: int, end: int, text: str, score: float = 1.0, label: str = None
+    ) -> Detection:
         return Detection(
             start=start,
             end=end,
             text=text,
-            label=self.label,
+            label=label or self.label,
             recognizer=self.name,
             score=score,
             priority=self.priority,
