@@ -18,7 +18,9 @@ JARGON = {
     "closing", "committee", "company", "consideration", "corrigenda",
     "criteria", "cut", "date", "deed", "defaulter", "depository", "designated",
     "director", "directors", "documents", "dp", "draft", "eligible", "equity",
-    "escrow", "financial", "floor", "form", "fresh", "fund", "funds", "gaap",
+    # "financial" is deliberately absent: it blocked the newspaper FINANCIAL
+    # EXPRESS, and "Financial Statements" is already caught by "statements".
+    "escrow", "floor", "form", "fresh", "fund", "funds", "gaap",
     "group", "herring", "holder", "holders", "id", "individual",
     "institutional", "instruments", "intermediaries", "investor", "investors",
     "issue", "issuer", "key", "kmp", "letter", "listing", "lot", "managerial",
@@ -48,6 +50,15 @@ JARGON = {
     "standards", "time", "union",
     # Stopwords, so a dangling "and" or "the" is trimmed from a span edge.
     "and", "of", "the",
+    # Fourth pass, from scored false positives: "FACE VALUE" alone accounted for
+    # 13 of 26, and the rest are table headings and label text.
+    "address", "banks", "card", "certified", "constitute", "credit", "e",
+    "email", "face", "ip", "mail", "on", "self", "shall", "value",
+    # Newspaper boilerplate, which the model reads as a person's name.
+    "circulated", "daily", "edition", "editions", "english", "hindi",
+    "marathi", "national", "newspaper", "regional", "widely",
+    # "BID/OFFE R" is a line break inside a heading in the source document.
+    "offe",
 }
 
 # Public bodies, exchanges and depositories. Referenced by law, not personal
@@ -99,7 +110,8 @@ GENERIC_ORG = set(COMPANY_SUFFIXES) | {"private", "family", "and", "of", "the", 
 # Words that mark a span as a place even when the model calls it a person.
 PLACE_WORDS = {
     "apartment", "bhavan", "building", "bungalow", "chambers", "chowk",
-    "colony", "complex", "district", "east", "estate", "facility", "floor",
+    "colony", "complex", "district", "east", "estate", "facility", "farm",
+    "farms", "floor",
     "gat", "gymkhana", "hospital", "house", "industrial", "khed", "layout",
     "marg", "nagar", "north", "opp", "park", "phase", "plot", "premises",
     "road", "sector", "showroom", "society", "south", "tal", "taluka",
@@ -124,7 +136,9 @@ def words_of(text: str):
 
 
 def all_jargon(text: str) -> bool:
-    words = words_of(text)
+    # Single characters are ignored: they are footnote markers and line-break
+    # debris, and they should not stop a heading being recognised as a heading.
+    words = [word for word in words_of(text) if len(word) > 1]
     return bool(words) and all(word in JARGON for word in words)
 
 

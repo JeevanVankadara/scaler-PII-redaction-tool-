@@ -117,6 +117,28 @@ class PersonRecognizer(_NerRecognizer):
     min_tokens = 2
     trim_edges = True
 
+    def find(self, text: str):
+        yield from super().find(text)
+        for start, end, value, _ in analyse(text):
+            # "Lokesh Shah/ Soumavo Sarkar" is two contact people in one cell,
+            # and the model reads the pair as a single organisation.
+            yield from self._split_pair(text, start, value)
+
+    def _split_pair(self, text: str, start: int, value: str):
+        if "/" not in value:
+            return
+        offset = 0
+        parts = []
+        for part in value.split("/"):
+            stripped = part.strip()
+            if stripped and self.keep(stripped) and len(stripped.split()) >= 2:
+                begin = start + offset + part.index(stripped)
+                parts.append((begin, begin + len(stripped), stripped))
+            offset += len(part) + 1
+        if len(parts) >= 2:
+            for begin, finish, name in parts:
+                yield self.detection(begin, finish, name, 0.75)
+
     def keep(self, value: str) -> bool:
         if has_digit(value) or has_company_suffix(value) or has_place_word(value):
             return False
@@ -165,7 +187,9 @@ class OrganizationRecognizer(_NerRecognizer):
             return False
         if has_company_suffix(value):
             return True
-        return sum(word[:1].isupper() for word in tokens(value)) >= 2
+        # Length two, so the stray "R" left by a line break in "BID/OFFE R"
+        # does not count as a word.
+        return sum(len(word) > 1 and word[:1].isupper() for word in tokens(value)) >= 2
 
 
 @register
@@ -185,8 +209,15 @@ class LocationRecognizer(_NerRecognizer):
     def find(self, text: str):
         yield from super().find(text)
         for start, end, value, label in analyse(text):
-            if label == "PERSON" and has_place_word(value) and not all_jargon(value):
+            # "Montreal Business Centre" and "Bandra Kurla Complex" arrive
+            # labelled ORG or PERSON; both are addresses. Any offer jargon in the
+            # span means it is a heading, not a place: "Book Building Process".
+            if label != "LOCATION" and has_place_word(value) and not self._jargony(value):
                 yield self.detection(start, end, value, 0.6)
+
+    @staticmethod
+    def _jargony(value: str) -> bool:
+        return any(word in JARGON for word in words_of(value))
 
     def skip(self, value: str) -> bool:
         return is_institution(value)

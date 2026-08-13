@@ -28,7 +28,18 @@ def build(only=None, exclude=None):
     return [REGISTRY[name]() for name in sorted(names)]
 
 
-from . import credit_card, dob, email, ip, ner, phone, ssn  # noqa: E402,F401  registration
+from . import (  # noqa: E402,F401  registration side effects
+    city,
+    company,
+    credit_card,
+    dob,
+    email,
+    ip,
+    ner,
+    phone,
+    postal_code,
+    ssn,
+)
 
 __all__ = [
     "REGISTRY",

@@ -1,0 +1,226 @@
+{
+  "ground_truth.json": {
+    "sample": "blocks 1-134, the cover pages and front matter",
+    "single_pass": false,
+    "typed": {
+      "EMAIL": {
+        "covered": 5,
+        "matched": 5,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "LOCATION": {
+        "covered": 23,
+        "matched": 23,
+        "fp": 2,
+        "fn": 2,
+        "precision": 0.92,
+        "recall": 0.92,
+        "f1": 0.92
+      },
+      "ORGANIZATION": {
+        "covered": 26,
+        "matched": 26,
+        "fp": 2,
+        "fn": 2,
+        "precision": 0.9286,
+        "recall": 0.9286,
+        "f1": 0.9286
+      },
+      "PERSON": {
+        "covered": 23,
+        "matched": 22,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.92,
+        "f1": 0.9583
+      },
+      "PHONE": {
+        "covered": 5,
+        "matched": 5,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "overall": {
+      "precision": 0.9529,
+      "recall": 0.9318,
+      "f1": 0.9423,
+      "accuracy": 0.9422
+    },
+    "untyped": {
+      "precision": 0.9765,
+      "recall": 0.9545,
+      "f1": 0.9654,
+      "accuracy": 0.9653
+    },
+    "missed": [
+      [
+        17,
+        "LOCATION",
+        "Pallod Farms"
+      ],
+      [
+        22,
+        "PERSON",
+        "RAKHI GIRIJA SHETTY"
+      ],
+      [
+        119,
+        "LOCATION",
+        "Pallod Farms"
+      ],
+      [
+        122,
+        "PERSON",
+        "RAKHI GIRIJA SHETTY"
+      ],
+      [
+        126,
+        "ORGANIZATION",
+        "JANSATTA"
+      ],
+      [
+        126,
+        "ORGANIZATION",
+        "LOKSATTA"
+      ]
+    ],
+    "false_positives": [
+      [
+        17,
+        "LOCATION",
+        "Tower 2"
+      ],
+      [
+        22,
+        "ORGANIZATION",
+        "RAKHI GIRIJA SHETTY"
+      ],
+      [
+        119,
+        "LOCATION",
+        "Tower 2"
+      ],
+      [
+        122,
+        "ORGANIZATION",
+        "RAKHI GIRIJA SHETTY"
+      ]
+    ]
+  },
+  "ground_truth_synthetic.json": {
+    "sample": "the whole file",
+    "single_pass": false,
+    "typed": {
+      "CREDIT_CARD": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "DATE_OF_BIRTH": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "EMAIL": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "IP_ADDRESS": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "LOCATION": {
+        "covered": 2,
+        "matched": 2,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.6667,
+        "f1": 0.8
+      },
+      "ORGANIZATION": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "PERSON": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "PHONE": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "SSN": {
+        "covered": 1,
+        "matched": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "overall": {
+      "precision": 1.0,
+      "recall": 0.9091,
+      "f1": 0.9524,
+      "accuracy": 0.9524
+    },
+    "untyped": {
+      "precision": 1.0,
+      "recall": 0.9091,
+      "f1": 0.9524,
+      "accuracy": 0.9524
+    },
+    "missed": [
+      [
+        5,
+        "LOCATION",
+        "MG Road"
+      ]
+    ],
+    "false_positives": []
+  }
+}
