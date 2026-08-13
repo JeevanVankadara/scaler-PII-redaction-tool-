@@ -30,7 +30,11 @@ files/Enterprise Data - Assignment.pdf
 
 # Scratch output from local runs (the final deliverable lives in outputs/)
 out_*.docx
+outputs/redacted.docx
 scratch/
+
+# Word lock files, created while a document is open
+~$*.docx
 
 # The mapping holds every real value beside its replacement. Publishing it would
 # undo the redaction, so it stays local and is regenerated with --mapping.
