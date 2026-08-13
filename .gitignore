@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editors and tooling
+.vscode/
+.idea/
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Assignment inputs: the prospectus holds real contact details and the brief is
+# not mine to publish. Both were supplied with the assignment.
+files/Red Herring Prospectus.docx
+files/Enterprise Data - Assignment.pdf
+
+# Scratch output from local runs (the final deliverable lives in outputs/)
+out_*.docx
+scratch/
