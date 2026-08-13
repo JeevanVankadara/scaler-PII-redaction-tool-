@@ -29,6 +29,17 @@ class RunStats:
         return "\n".join(lines)
 
 
+def scan(source, engine, include_headers: bool = True):
+    """Detect without changing anything. Used for the linking pass and for evaluation."""
+    document = load(source)
+    return [
+        detection
+        for block in iter_blocks(document, include_headers=include_headers)
+        if block.text.strip()
+        for detection in engine.detect(block.text)
+    ]
+
+
 def run(source, destination, transform, include_headers: bool = True) -> RunStats:
     started = time.perf_counter()
     document = load(source)

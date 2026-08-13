@@ -7,6 +7,15 @@ same surrogate everywhere in the document. Subclasses only supply `generate`.
 from abc import ABC, abstractmethod
 
 from .detection import Detection
+from .identities import IdentityRegistry, seed_for
+from .surrogates import (
+    fake_card,
+    fake_date,
+    fake_ip,
+    fake_phone,
+    fake_ssn,
+    match_case,
+)
 
 
 class SurrogatePolicy(ABC):
@@ -56,3 +65,51 @@ class NumberedPlaceholderPolicy(SurrogatePolicy):
     def reset(self) -> None:
         super().reset()
         self._counts.clear()
+
+
+class FakeIdentityPolicy(SurrogatePolicy):
+    """Replaces PII with plausible fake values instead of markers.
+
+    A person and their email address resolve to one identity, so Rashi Patil
+    becomes John Doe and rashi.patil@gmail.com becomes john.doe@example.com.
+    Everything else keeps the shape of what it replaced, so the document still
+    reads as a document.
+    """
+
+    def __init__(self, domain: str = "example.com"):
+        super().__init__()
+        self.identities = IdentityRegistry(domain)
+
+    def generate(self, detection: Detection) -> str:
+        label, value = detection.label, detection.text
+        if label == "PERSON":
+            return match_case(value, self.identities.for_name(value).full)
+        if label == "EMAIL":
+            return self.identities.for_email(value).email
+        if label == "ORGANIZATION":
+            return match_case(value, self._faker(value).company())
+        if label == "LOCATION":
+            return match_case(value, self._faker(value).city())
+        if label == "PHONE":
+            return fake_phone(value)
+        if label == "DATE_OF_BIRTH":
+            return fake_date(value)
+        if label == "SSN":
+            return fake_ssn(value)
+        if label == "CREDIT_CARD":
+            return fake_card(value)
+        if label == "IP_ADDRESS":
+            return fake_ip(value)
+        return f"[{label}]"
+
+    @staticmethod
+    def _faker(value: str):
+        from faker import Faker
+
+        faker = Faker("en_US")
+        faker.seed_instance(seed_for(value))
+        return faker
+
+    def reset(self) -> None:
+        super().reset()
+        self.identities = IdentityRegistry(self.identities.domain)
