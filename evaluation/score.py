@@ -113,12 +113,17 @@ def overlaps(left, right) -> bool:
     return left[0] < right[1] and right[0] < left[1]
 
 
-def cover(expected, predicted, typed: bool):
+def cover(expected, predicted, typed: bool, strict: bool = False):
     """Which annotations were covered, and which detections landed on something.
 
     Many-to-one is allowed in both directions: one detection may cover several
     annotations, and one annotation may be covered by several detections.
+    `strict` restores greedy one-to-one pairing, which is available so the effect
+    of that choice can be measured rather than asserted.
     """
+    if strict:
+        return _pair_one_to_one(expected, predicted, typed)
+
     covered = {
         index
         for index, span in enumerate(expected)
@@ -138,7 +143,20 @@ def cover(expected, predicted, typed: bool):
     return covered, matched
 
 
-def evaluate(truth: GroundTruth, engine: RedactionEngine) -> Result:
+def _pair_one_to_one(expected, predicted, typed: bool):
+    taken, covered = set(), set()
+    for index, span in enumerate(expected):
+        for other, candidate in enumerate(predicted):
+            if other in taken or (typed and span[2] != candidate[2]):
+                continue
+            if overlaps(span, candidate):
+                taken.add(other)
+                covered.add(index)
+                break
+    return covered, taken
+
+
+def evaluate(truth: GroundTruth, engine: RedactionEngine, strict: bool = False) -> Result:
     by_block = defaultdict(list)
     for annotation in truth.annotations:
         by_block[annotation.block].append(annotation)
@@ -150,7 +168,7 @@ def evaluate(truth: GroundTruth, engine: RedactionEngine) -> Result:
             (d.start, d.end, d.label, d.text) for d in engine.detect(text)
         ]
 
-        covered, matched = cover(expected, predicted, typed=True)
+        covered, matched = cover(expected, predicted, typed=True, strict=strict)
         for position, span in enumerate(expected):
             if position in covered:
                 result.typed[span[2]].covered += 1
@@ -164,7 +182,7 @@ def evaluate(truth: GroundTruth, engine: RedactionEngine) -> Result:
                 result.typed[span[2]].false_positives += 1
                 result.spurious.append((index, span[2], span[3]))
 
-        loose_covered, loose_matched = cover(expected, predicted, typed=False)
+        loose_covered, loose_matched = cover(expected, predicted, typed=False, strict=strict)
         result.untyped.covered += len(loose_covered)
         result.untyped.matched += len(loose_matched)
         result.untyped.false_negatives += len(expected) - len(loose_covered)
@@ -211,6 +229,11 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Score the redactor against ground truth.")
     parser.add_argument("files", nargs="*", type=Path)
     parser.add_argument("--single-pass", action="store_true")
+    parser.add_argument(
+        "--strict-pairing",
+        action="store_true",
+        help="score with one-to-one span matching instead of coverage",
+    )
     parser.add_argument("--json", type=Path, help="write the raw numbers to a file")
     parser.add_argument("--errors", type=int, default=15, help="how many misses to list")
     args = parser.parse_args(argv)
@@ -221,7 +244,7 @@ def main(argv=None) -> int:
     for path in paths:
         truth = GroundTruth(path)
         engine = build_engine(truth.source, args.single_pass)
-        result = evaluate(truth, engine)
+        result = evaluate(truth, engine, strict=args.strict_pairing)
 
         print(f"=== {truth.path.name}  ({truth.sample})")
         print(f"    linking pass: {'off' if args.single_pass else 'on'}")
