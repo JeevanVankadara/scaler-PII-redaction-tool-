@@ -24,9 +24,12 @@ desktop.ini
 files/Red Herring Prospectus.docx
 files/Enterprise Data - Assignment.pdf
 
-# Scratch output from local runs (the final deliverable lives in outputs/)
+# Scratch output from local runs. Only the named deliverable is tracked, so a
+# stray -o run cannot end up in the repository.
 out_*.docx
 scratch/
+outputs/*.docx
+!outputs/Red Herring Prospectus (redacted).docx
 
 # Word lock files, created while a document is open
 ~$*.docx
