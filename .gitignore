@@ -1,7 +1,3 @@
-# Node and the built interface
-web/node_modules/
-web/dist/
-
 # Python
 __pycache__/
 *.py[cod]
@@ -30,7 +26,6 @@ files/Enterprise Data - Assignment.pdf
 
 # Scratch output from local runs (the final deliverable lives in outputs/)
 out_*.docx
-outputs/redacted.docx
 scratch/
 
 # Word lock files, created while a document is open
