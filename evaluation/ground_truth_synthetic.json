@@ -1,0 +1,22 @@
+{
+  "source": "files/test_synthetic.docx",
+  "sample": "the whole file",
+  "scope": {"first_block": 0, "last_block": 10},
+  "scope_note": "Blocks 9 and 10 are the title and the closing disclaimer; both were read and contain no PII.",
+  "sampling_rationale": "The prospectus contains no SSN, credit card, IP address or date of birth, which is expected of an Indian SEBI filing. Without this file four of the nine required PII types would have no measurement at all. Its content is fabricated, so its ground truth is exact rather than a judgement.",
+  "method": "Written by hand alongside the file itself.",
+  "conventions": {
+    "note": "Same conventions as ground_truth.json. Every value here is fictional."
+  },
+  "annotations": [
+    {"block": 0, "items": [["PERSON", "John Doe"]]},
+    {"block": 1, "items": [["EMAIL", "john.doe@example.com"]]},
+    {"block": 2, "items": [["PHONE", "+91 9876543210"]]},
+    {"block": 3, "items": [["DATE_OF_BIRTH", "14/08/2000"]]},
+    {"block": 4, "items": [["ORGANIZATION", "Acme Technologies Limited"]]},
+    {"block": 5, "items": [["LOCATION", "MG Road"], ["LOCATION", "Pune"], ["LOCATION", "411001"]]},
+    {"block": 6, "items": [["SSN", "123-45-6789"]]},
+    {"block": 7, "items": [["CREDIT_CARD", "4532-0151-1283-0366"]]},
+    {"block": 8, "items": [["IP_ADDRESS", "192.168.1.100"]]}
+  ]
+}
