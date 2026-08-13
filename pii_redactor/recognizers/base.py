@@ -63,3 +63,18 @@ class RegexRecognizer(Recognizer):
 
     def score_of(self, match) -> float:
         return 1.0
+
+
+class ContextualRegexRecognizer(RegexRecognizer):
+    """Accepts a match only when a cue word sits just before it.
+
+    Dates are the motivating case: a prospectus is full of them and essentially
+    none are dates of birth, so the pattern alone is useless without context.
+    """
+
+    context: "re.Pattern" = None
+    window: int = 50
+
+    def validate(self, match) -> bool:
+        left = max(0, match.start() - self.window)
+        return bool(self.context.search(match.string, left, match.start()))

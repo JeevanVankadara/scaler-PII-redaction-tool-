@@ -4,7 +4,7 @@ Adding a PII type is: write the class in this package, decorate it with
 @register, and import the module at the bottom of this file.
 """
 
-from .base import Recognizer, RegexRecognizer
+from .base import ContextualRegexRecognizer, Recognizer, RegexRecognizer
 
 REGISTRY = {}
 
@@ -28,6 +28,13 @@ def build(only=None, exclude=None):
     return [REGISTRY[name]() for name in sorted(names)]
 
 
-from . import email  # noqa: E402,F401  registration side effect
+from . import credit_card, dob, email, ip, phone, ssn  # noqa: E402,F401  registration
 
-__all__ = ["REGISTRY", "Recognizer", "RegexRecognizer", "build", "register"]
+__all__ = [
+    "REGISTRY",
+    "ContextualRegexRecognizer",
+    "Recognizer",
+    "RegexRecognizer",
+    "build",
+    "register",
+]

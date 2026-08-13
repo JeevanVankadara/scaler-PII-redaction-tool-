@@ -98,7 +98,7 @@ def test_adding_a_pii_type_needs_no_engine_change():
 
 def test_build_filters_by_name():
     assert [r.name for r in build(only=["email"])] == ["email"]
-    assert [r.name for r in build(exclude=["email"])] == []
+    assert "email" not in {r.name for r in build(exclude=["email"])}
     assert set(REGISTRY) >= {"email"}
 
 
