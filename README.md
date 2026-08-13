@@ -33,6 +33,39 @@ A full run over the prospectus takes about 55 seconds and makes 933
 replacements: 394 organisations, 273 places, 178 people, 52 emails, 36 phone
 numbers.
 
+## Web interface
+
+A REST API (Flask) and a React front end. Upload a `.docx`, watch it process,
+see the counts by category, browse the real-to-fake mapping, download the result.
+
+```bash
+cd web && npm install && npm run build
+```
+
+```bash
+.venv\Scripts\python.exe -m server.app
+```
+
+Then open `http://localhost:8000`. For front-end development run
+`npm run dev` in `web/` alongside the server; Vite proxies `/api` to it, so
+there is no CORS configuration anywhere.
+
+| method | route | |
+|---|---|---|
+| `POST` | `/api/jobs` | upload a `.docx`, returns a job id |
+| `GET` | `/api/jobs/{id}` | status and, once finished, the counts |
+| `GET` | `/api/jobs/{id}/mapping` | the real-to-fake mapping |
+| `GET` | `/api/jobs/{id}/download` | the redacted `.docx` |
+| `DELETE` | `/api/jobs/{id}` | drop the job and its files |
+
+A full run takes about a minute, which is too long for one request to hold
+open, so uploads start a background job and the page polls it.
+
+**The mapping endpoint returns unredacted source data.** It is the one thing
+that can reverse the pseudonymization. It is served `no-store`, never logged,
+and the table carries a warning. Do not expose this server to a network you do
+not control.
+
 ## Approach
 
 **Hybrid: patterns for structured PII, a model for the rest.** Emails, phone

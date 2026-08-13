@@ -50,6 +50,25 @@ def fake_phone(original: str) -> str:
     return "".join(out)
 
 
+def is_postal_code(value: str) -> bool:
+    digits = [character for character in value if character.isdigit()]
+    return len(digits) == len(value.replace(" ", "")) and len(digits) == 6
+
+
+def fake_postal_code(original: str) -> str:
+    """Keep the spacing: "410 501" stays "410 501", not a city name."""
+    random_source = rng(original)
+    first = True
+    out = []
+    for character in original:
+        if not character.isdigit():
+            out.append(character)
+            continue
+        out.append(str(random_source.randint(1, 9) if first else random_source.randint(0, 9)))
+        first = False
+    return "".join(out)
+
+
 def fake_date(original: str) -> str:
     """A plausible birth date in the same format as the one found."""
     random_source = rng(original)

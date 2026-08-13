@@ -119,6 +119,15 @@ def test_generated_card_passes_luhn():
     assert result != "4532-0151-1283-0366"
 
 
+def test_postal_codes_stay_postal_codes():
+    """A PIN replaced by a city name reads as a bug in the output."""
+    policy = FakeIdentityPolicy()
+    assert re.fullmatch(r"[1-9]\d{2} \d{3}", surrogate(policy, "LOCATION", "410 501"))
+    assert re.fullmatch(r"[1-9]\d{5}", surrogate(policy, "LOCATION", "411001"))
+    named = surrogate(policy, "LOCATION", "Pune")
+    assert named and not any(character.isdigit() for character in named)
+
+
 def test_ssn_and_ip_keep_their_shape():
     assert re.fullmatch(r"\d{3}-\d{2}-\d{4}", fake_ssn("123-45-6789"))
     assert re.fullmatch(r"\d{3} \d{2} \d{4}", fake_ssn("078 05 1120"))

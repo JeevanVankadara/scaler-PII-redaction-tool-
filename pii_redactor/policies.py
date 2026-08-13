@@ -13,7 +13,9 @@ from .surrogates import (
     fake_date,
     fake_ip,
     fake_phone,
+    fake_postal_code,
     fake_ssn,
+    is_postal_code,
     match_case,
 )
 
@@ -89,6 +91,8 @@ class FakeIdentityPolicy(SurrogatePolicy):
         if label == "ORGANIZATION":
             return match_case(value, self._faker(value).company())
         if label == "LOCATION":
+            if is_postal_code(value):
+                return fake_postal_code(value)
             return match_case(value, self._faker(value).city())
         if label == "PHONE":
             return fake_phone(value)
