@@ -1,3 +1,7 @@
+# Node and the built interface. Render builds both inside the Dockerfile.
+web/node_modules/
+web/dist/
+
 # Python
 __pycache__/
 *.py[cod]

@@ -33,6 +33,60 @@ A full run over the prospectus takes about 55 seconds and makes 933
 replacements: 394 organisations, 273 places, 178 people, 52 emails, 36 phone
 numbers.
 
+## Web interface
+
+A Flask REST API and a React front end. Upload a `.docx`, watch it process, read
+the counts by category, browse every value that was detected beside what replaced
+it, download the result.
+
+```bash
+cd web && npm install && npm run build
+```
+
+```bash
+.venv\Scripts\python.exe -m server.app
+```
+
+Then open `http://localhost:8000`. For front-end work run `npm run dev` in `web/`
+alongside the server; Vite proxies `/api` to it, so there is no CORS
+configuration anywhere.
+
+| method | route | |
+|---|---|---|
+| `GET` | `/api/health` | liveness, used by the Render health check |
+| `POST` | `/api/jobs` | upload a `.docx`, returns a job id |
+| `GET` | `/api/jobs/{id}` | status and, once finished, the counts |
+| `GET` | `/api/jobs/{id}/mapping` | every detected value and its replacement |
+| `GET` | `/api/jobs/{id}/download` | the redacted `.docx` |
+| `DELETE` | `/api/jobs/{id}` | drop the job and its files |
+
+A full run takes about a minute, which is too long for one request to hold open,
+so uploads start a background job and the page polls it.
+
+**The mapping endpoint returns unredacted source data.** It is the one thing that
+can reverse the pseudonymization. It is served `no-store`, never logged, and the
+table carries a warning. Do not expose this server to a network you do not
+control.
+
+## Deploying to Render
+
+One web service serves both halves. The `Dockerfile` builds the React bundle in a
+Node stage and copies it into the Python stage, so there is a single URL, no CORS
+and no second deployment to keep in sync.
+
+1. New → Web Service → connect this repository.
+2. Runtime **Docker**; Render reads the `Dockerfile` and needs no build command.
+3. Health check path `/api/health`.
+
+`render.yaml` describes the same thing as a blueprint if you would rather deploy
+that way.
+
+**Memory is the thing to watch.** The free instance has 512 MB. spaCy plus a
+document the size of the prospectus parsed into an XML tree can exceed that, and
+the process is killed mid-run. The blueprint asks for `starter` for that reason;
+the free plan is fine for the small test files. Free instances also sleep after
+inactivity, so the first upload after a pause waits for a cold start.
+
 ## Approach
 
 **Hybrid: patterns for structured PII, a model for the rest.** Emails, phone
@@ -193,10 +247,3 @@ Every file under `tests/` runs standalone with no test runner. `test_roundtrip.p
 checks losslessness against the real prospectus and
 `evaluation/ground_truth.py` re-validates every annotation against the live
 document.
-
-## Notes
-
-The prospectus and the assignment brief are gitignored: the first carries real
-contact details and the second is not mine to publish. The mapping file is
-gitignored too, since pairing every real value with its replacement would undo
-the redaction.

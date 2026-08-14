@@ -1,0 +1,18 @@
+# Render blueprint. One web service builds the Dockerfile, which contains both
+# the React build and the Flask API, so there is a single URL to share.
+#
+# The free plan has 512 MB of memory. spaCy plus a large .docx parsed into an
+# XML tree can exceed that on a document the size of the prospectus, so the plan
+# below is `starter`. Change it to `free` if you only need the small test files.
+
+services:
+  - type: web
+    name: pii-redaction-tool
+    runtime: docker
+    plan: starter
+    region: singapore
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
