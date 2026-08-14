@@ -104,7 +104,16 @@ class FakeIdentityPolicy(SurrogatePolicy):
             return fake_card(value)
         if label == "IP_ADDRESS":
             return fake_ip(value)
+        if label == "URL":
+            return self._fake_website(value)
         return f"[{label}]"
+
+    def _fake_website(self, value: str) -> str:
+        """Keep the scheme and the www, replace the domain, drop any path."""
+        lowered = value.lower()
+        scheme = value[: value.index("//") + 2] if "//" in value else ""
+        prefix = "www." if lowered.startswith("www.") or "//www." in lowered else ""
+        return f"{scheme}{prefix}{self._faker(value).domain_name()}"
 
     @staticmethod
     def _faker(value: str):

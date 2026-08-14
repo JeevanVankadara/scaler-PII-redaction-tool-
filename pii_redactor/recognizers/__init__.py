@@ -39,6 +39,7 @@ from . import (  # noqa: E402,F401  registration side effects
     phone,
     postal_code,
     ssn,
+    website,
 )
 
 __all__ = [

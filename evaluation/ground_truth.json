@@ -10,7 +10,9 @@
     "LOCATION": "Cities, towns, localities, named buildings and postal codes. Countries and states (India, Maharashtra) are NOT annotated: neither identifies anyone alone.",
     "PERSON": "Personal names. Each occurrence is listed separately.",
     "not_pii": "Corporate Identity Numbers, page references, monetary amounts, share counts, filing and agreement dates, and statute names are deliberately not annotated.",
-    "out_of_scope": "URLs and website addresses are not in the assignment's list of PII types and are not annotated, though www.kshinternational.com does identify the issuer. Recorded as a known gap rather than counted against recall.",
+    "URL": "Company websites. Not one of the assignment's nine types, and annotated anyway: the issuer's name sits inside its own domain, so leaving www.kshinternational.com in place would undo the company-name redaction everywhere else.",
+    "scope_change": "URLs were originally excluded and recorded as a known gap. They are now detected, so they are now annotated. This adds to the denominator, so URL numbers cannot be compared against runs made before the change; the report says so rather than presenting the addition as pure gain.",
+    "out_of_scope": "Street and plot numbers, such as 11/3, 11/4 and 11/5 in the registered office address, are not annotated. A pattern for them collides with the clause numbers, rule numbers and share counts that fill a prospectus, and the precision cost was judged not worth it. Recorded as a known gap rather than counted against recall.",
     "block_boundaries": "EVEREST FAMILY TRUST is split across blocks 122 and 123 by the document's own layout. Neither half is annotated, since no block-local system could match it. Recorded as a known limitation."
   },
   "annotations": [
@@ -18,6 +20,7 @@
     {"block": 15, "items": [["LOCATION", "Birdewadi"], ["LOCATION", "Chakan"], ["LOCATION", "Khed"], ["LOCATION", "Pune"], ["LOCATION", "410 501"]]},
     {"block": 17, "items": [["LOCATION", "Montreal Business Centre"], ["LOCATION", "Pallod Farms"], ["LOCATION", "Baner"], ["LOCATION", "Pune"], ["LOCATION", "411 045"]]},
     {"block": 19, "items": [["PERSON", "Sarthak Malvadkar"]]},
+    {"block": 21, "items": [["URL", "www.kshinternational"]]},
     {"block": 20, "items": [["EMAIL", "cs.connect@kshinternational.com"], ["PHONE", "+ 91 20 45053237"]]},
     {"block": 22, "items": [["PERSON", "KUSHAL SUBBAYYA HEGDE"], ["PERSON", "PUSHPA KUSHAL HEGDE"], ["PERSON", "RAJESH KUSHAL HEGDE"], ["PERSON", "ROHIT KUSHAL HEGDE"], ["PERSON", "RAKHI GIRIJA SHETTY"], ["ORGANIZATION", "DHAULAGIRI FAMILY TRUST"], ["ORGANIZATION", "EVEREST FAMILY TRUST"], ["ORGANIZATION", "MAKALU FAMILY TRUST"], ["ORGANIZATION", "BROAD FAMILY TRUST"], ["ORGANIZATION", "ANNAPURNA FAMILY TRUST"], ["ORGANIZATION", "KANCHENJUNGA FAMILY TRUST"]]},
     {"block": 23, "items": [["ORGANIZATION", "WATERLOO INDUSTRIAL PARK VI PRIVATE LIMITED"]]},
@@ -44,7 +47,7 @@
     {"block": 118, "items": [["LOCATION", "Birdewadi"], ["LOCATION", "Chakan"], ["LOCATION", "Khed"], ["LOCATION", "Pune"], ["LOCATION", "410 501"]]},
     {"block": 119, "items": [["LOCATION", "Montreal Business Centre"], ["LOCATION", "Pallod Farms"], ["LOCATION", "Baner"], ["LOCATION", "Pune"], ["LOCATION", "411 045"]]},
     {"block": 120, "items": [["PERSON", "Sarthak Malvadkar"], ["PHONE", "+ 91 20 4505 3237"]]},
-    {"block": 121, "items": [["EMAIL", "cs.connect@kshinternational.com"]]},
+    {"block": 121, "items": [["EMAIL", "cs.connect@kshinternational.com"], ["URL", "www.kshinternational.com"]]},
     {"block": 122, "items": [["PERSON", "KUSHAL SUBBAYYA HEGDE"], ["PERSON", "PUSHPA KUSHAL HEGDE"], ["PERSON", "RAJESH KUSHAL HEGDE"], ["PERSON", "ROHIT KUSHAL HEGDE"], ["PERSON", "RAKHI GIRIJA SHETTY"], ["ORGANIZATION", "DHAULAGIRI FAMILY TRUST"]]},
     {"block": 123, "items": [["ORGANIZATION", "MAKALU FAMILY TRUST"], ["ORGANIZATION", "BROAD FAMILY TRUST"], ["ORGANIZATION", "ANNAPURNA FAMILY TRUST"], ["ORGANIZATION", "KANCHENJUNGA FAMILY TRUST"], ["ORGANIZATION", "WATERLOO INDUSTRIAL PARK VI PRIVATE LIMITED"]]},
     {"block": 124, "items": [["ORGANIZATION", "KSH INTERNATIONAL LIMITED"], ["PERSON", "KUSHAL SUBBAYYA HEGDE"], ["PERSON", "PUSHPA KUSHAL HEGDE"], ["PERSON", "RAJESH KUSHAL HEGDE"], ["PERSON", "ROHIT KUSHAL HEGDE"]]},

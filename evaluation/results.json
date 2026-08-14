@@ -47,19 +47,28 @@
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0
+      },
+      "URL": {
+        "covered": 2,
+        "matched": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
       }
     },
     "overall": {
-      "precision": 0.9529,
-      "recall": 0.9318,
-      "f1": 0.9423,
-      "accuracy": 0.9422
+      "precision": 0.954,
+      "recall": 0.9333,
+      "f1": 0.9436,
+      "accuracy": 0.9435
     },
     "untyped": {
-      "precision": 0.9765,
-      "recall": 0.9545,
-      "f1": 0.9654,
-      "accuracy": 0.9653
+      "precision": 0.977,
+      "recall": 0.9556,
+      "f1": 0.9662,
+      "accuracy": 0.9661
     },
     "missed": [
       [

@@ -11,7 +11,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from pii_redactor.recognizers.city import CityRecognizer
 from pii_redactor.recognizers.company import CompanyRecognizer
+from pii_redactor.recognizers.email import EmailRecognizer
 from pii_redactor.recognizers.postal_code import PostalCodeRecognizer
+from pii_redactor.recognizers.website import WebsiteRecognizer
 
 
 def found(recognizer, text):
@@ -52,6 +54,26 @@ def test_companies_are_found_by_their_legal_suffix():
         "Link Intime India Private Limited"
     ]
     assert found(recognizer, "certified by Kirtane & Pandit LLP") == ["Kirtane & Pandit LLP"]
+
+
+def test_websites_are_found():
+    recognizer = WebsiteRecognizer()
+    assert found(recognizer, "Website: www.kshinternational.com") == [
+        "www.kshinternational.com"
+    ]
+    assert found(recognizer, "see https://kshinternational.com/investor-relations/ for") == [
+        "https://kshinternational.com/investor-relations/"
+    ]
+    # The document splits this one across a space. The domain still goes, and
+    # the dangling full stop is left where it is rather than swallowed.
+    assert found(recognizer, "www.kshinternational. com") == ["www.kshinternational"]
+
+
+def test_website_pattern_leaves_email_domains_alone():
+    """An address ends in a domain too. The email recognizer owns those."""
+    text = "E-mail: cs.connect@kshinternational.com; Website: www.kshinternational.com"
+    assert found(WebsiteRecognizer(), text) == ["www.kshinternational.com"]
+    assert found(EmailRecognizer(), text) == ["cs.connect@kshinternational.com"]
 
 
 def test_company_pattern_rejects_fragments_and_institutions():

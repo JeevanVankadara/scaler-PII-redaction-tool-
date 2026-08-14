@@ -14,6 +14,7 @@ from pii_redactor.policies import FakeIdentityPolicy
 from pii_redactor.recognizers import build
 from pii_redactor.recognizers.credit_card import luhn
 from pii_redactor.surrogates import (
+    digits_of,
     fake_card,
     fake_date,
     fake_ip,
@@ -104,6 +105,32 @@ def test_phone_keeps_shape_and_country_code():
         assert [c.isdigit() for c in result] == [c.isdigit() for c in original]
         assert result != original
     assert fake_phone("+91 9876543210").startswith("+91 ")
+
+
+def test_one_number_written_two_ways_gets_one_replacement():
+    """The document writes the same office number with and without a space.
+
+    Seeded from the literal these came out as two different numbers, which reads
+    as two offices. The replacement now follows the digits, not the spelling.
+    """
+    spaced, unspaced = fake_phone("+ 91 20 4505 3237"), fake_phone("+ 91 20 45053237")
+    assert digits_of(spaced) == digits_of(unspaced)
+    assert spaced != unspaced  # each keeps its own spacing
+
+
+def test_phone_variants_agree_through_the_policy():
+    policy = FakeIdentityPolicy()
+    first = surrogate(policy, "PHONE", "+91 22 4009 4400")
+    second = surrogate(policy, "PHONE", "+91 22 40094400")
+    assert digits_of(first) == digits_of(second)
+
+
+def test_websites_become_a_fake_domain():
+    policy = FakeIdentityPolicy()
+    for original in ["www.kshinternational.com", "https://kshinternational.com/investors"]:
+        assert "kshinternational" not in surrogate(policy, "URL", original)
+    assert surrogate(policy, "URL", "www.kshinternational.com").startswith("www.")
+    assert surrogate(policy, "URL", "https://kshinternational.com/x").startswith("https://")
 
 
 def test_dates_keep_their_format():

@@ -31,23 +31,36 @@ def match_case(original: str, replacement: str) -> str:
     return replacement
 
 
-def fake_phone(original: str) -> str:
-    """Keep punctuation and the country code; randomise the subscriber digits.
+def digits_of(value: str) -> str:
+    return "".join(character for character in value if character.isdigit())
 
-    "+ 91 20 45053237" stays a +91 number with the same spacing, which is what
-    the assignment's own example does.
-    """
-    random_source = rng(original)
-    keep = 2 if original.lstrip().startswith("+") else 0
-    seen = 0
-    out = []
+
+def render_digits(original: str, digits: str) -> str:
+    """Put `digits` back into the punctuation of `original`, in order."""
+    out, position = [], 0
     for character in original:
-        if not character.isdigit():
-            out.append(character)
-            continue
-        seen += 1
-        out.append(character if seen <= keep else str(random_source.randint(0, 9)))
+        out.append(digits[position] if character.isdigit() else character)
+        position += character.isdigit()
     return "".join(out)
+
+
+def phone_digits(digits: str) -> str:
+    """Fake digits for a number, seeded by the number rather than its spelling.
+
+    The document writes one office number two ways, "+ 91 20 45053237" and
+    "+ 91 20 4505 3237". Seeded from the literal those became two different
+    numbers, which reads as two different offices. Seeding from the digits alone
+    makes every spelling of a number resolve to the same fake number.
+    """
+    random_source = rng(digits)
+    keep = 2 if len(digits) >= 11 else 0  # leave the country or trunk code alone
+    tail = "".join(str(random_source.randint(0, 9)) for _ in range(len(digits) - keep))
+    return digits[:keep] + tail
+
+
+def fake_phone(original: str) -> str:
+    """Keep the punctuation of this spelling; take the digits from the number."""
+    return render_digits(original, phone_digits(digits_of(original)))
 
 
 def is_postal_code(value: str) -> bool:
