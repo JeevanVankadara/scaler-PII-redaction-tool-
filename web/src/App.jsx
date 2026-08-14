@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createJob, downloadDocx, errorMessage, readJob, readMapping } from "./api";
-import Analytics from "./components/Analytics";
-import DetectedTable from "./components/DetectedTable";
-import Icon from "./components/Icon";
-import UploadPanel from "./components/UploadPanel";
+import CategoryRail from "./components/CategoryRail";
+import Hero from "./components/Hero";
+import Processing from "./components/Processing";
+import ResultHeader from "./components/ResultHeader";
+import TopBar from "./components/TopBar";
+import ValuesTable from "./components/ValuesTable";
 
 const POLL_MS = 1500;
 
@@ -48,10 +50,12 @@ export default function App() {
           setMapping(rows);
         } else if (latest.status === "error") {
           stop();
+          setJob(null);
           setError(latest.error);
         }
       } catch (problem) {
         stop();
+        setJob(null);
         setError(errorMessage(problem));
       }
     }, POLL_MS);
@@ -65,68 +69,32 @@ export default function App() {
     setError("");
   }
 
-  const done = job && job.status === "done";
+  const busy = job?.status === "queued" || job?.status === "running";
+  const done = job?.status === "done";
 
   return (
-    <div className="page">
-      <header className="header">
-        <span className="badge">
-          <Icon name="SHIELD" size={14} />
-          Enterprise Security &amp; Privacy Engine
-        </span>
-        <h1>PII Pseudonymization Tool</h1>
-        <p className="lede">
-          Automatically detect sensitive personal information in Microsoft Word (.docx)
-          documents and replace it with privacy-preserving synthetic alternatives.
-        </p>
-      </header>
+    <div className="app">
+      <TopBar job={job} onReset={reset} />
 
-      {!done && (
-        <UploadPanel
-          status={job?.status}
-          filename={job?.filename}
-          error={error}
-          onSelect={upload}
-        />
-      )}
+      <main className="main">
+        {!job && <Hero error={error} onSelect={upload} />}
+        {busy && <Processing filename={job.filename} />}
 
-      {done && (
-        <>
-          <section className="card">
-            <span className="badge success">
-              <Icon name="CHECK" size={14} />
-              Pseudonymization Complete
-            </span>
-
-            <div className="summary-head">
-              <div>
-                <h2 className="title">Document Transformation Summary</h2>
-                <p className="muted">
-                  Output document: <strong className="link">{job.output_name}</strong>
-                </p>
-              </div>
-              <div className="actions">
-                <button
-                  className="btn primary"
-                  onClick={() => downloadDocx(job.id, job.output_name)}
-                >
-                  <Icon name="DOWNLOAD" size={16} />
-                  Download Pseudonymized DOCX
-                </button>
-                <button className="btn" onClick={reset}>
-                  <Icon name="REFRESH" size={16} />
-                  Process Another Document
-                </button>
-              </div>
+        {done && (
+          <div className="result">
+            <ResultHeader job={job} onDownload={() => downloadDocx(job.id, job.output_name)} />
+            <div className="split">
+              <CategoryRail
+                categories={job.stats.categories}
+                total={job.stats.total_entities}
+                active={type}
+                onSelect={setType}
+              />
+              <ValuesTable rows={mapping} type={type} />
             </div>
-
-            <hr className="rule" />
-            <Analytics stats={job.stats} active={type} onSelect={setType} />
-          </section>
-
-          <DetectedTable rows={mapping} type={type} onType={setType} />
-        </>
-      )}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
