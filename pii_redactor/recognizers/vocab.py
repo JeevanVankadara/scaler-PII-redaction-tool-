@@ -59,6 +59,12 @@ JARGON = {
     "marathi", "national", "newspaper", "regional", "widely",
     # "BID/OFFE R" is a line break inside a heading in the source document.
     "offe",
+    # Engineering and unit words. The model reads "Air Conditioning" as a name,
+    # and because the gazetteer is case insensitive one such mistake spreads to
+    # every lowercase "air conditioning" in the document.
+    "air", "amperes", "circuit", "conditioning", "kilometer", "kilometers",
+    "kilometre", "kilometres", "mega", "photo", "volt", "voltaic", "volts",
+    "watt", "watts",
 }
 
 # Public bodies, exchanges and depositories. Referenced by law, not personal

@@ -78,6 +78,20 @@ def test_person_rejects_document_jargon():
         assert found(PersonRecognizer(), text) == []
 
 
+def test_engineering_terms_are_not_entities():
+    """One of these seeded the gazetteer, which then matched it in lower case
+    everywhere in the document. The fix has to hold for both recognizers."""
+    for text in [
+        "Air Conditioning systems installed",
+        "the air conditioning unit",
+        "1,200 Circuit Kilometers of cable",
+        "Photo Voltaic modules",
+        "rated in Mega Volt-Amperes",
+    ]:
+        assert found(PersonRecognizer(), text) == [], text
+        assert found(OrganizationRecognizer(), text) == [], text
+
+
 def test_organization_keeps_companies_and_drops_regulators():
     text = "HDFC Bank Limited and the Securities and Exchange Board of India"
     detected = found(OrganizationRecognizer(), text)

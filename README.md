@@ -145,6 +145,18 @@ Ten errors remain on the sample, listed in full in `evaluation/results.json`.
 - **`Pallod Farms`, twice.** The model does not tag it and no pattern covers it.
 - **`JANSATTA`, `LOKSATTA`.** The single-token organisation trade, above.
 
+Two government scheme names, `Gram Jyoti` and `Kisan Urja Suraksha`, are still
+read as people. They could be silenced by adding those words to the vocabulary,
+and deliberately are not: Jyoti is a common given name, and the others are
+plausible parts of one. Blocking them to tidy up a cosmetic false positive would
+cause a real name to leak, which is the wrong trade for a redaction tool.
+
+**The gazetteer multiplies whatever it is given.** It is built from the first
+pass and matches case insensitively, so a single bad detection is then applied to
+every casing of that phrase in the document — `Air Conditioning` becoming a name
+once meant every lowercase `air conditioning` was redacted too. That is why false
+positives are fixed at the vocabulary rather than by filtering the gazetteer.
+
 Beyond the scored sample, three leaks are known in the full document. Names
 written with a tab inside them, such as `Sunil\tNagayya Shetty`, are missed when
 that is their only occurrence. Type confusion can leave a fragment behind, as in
