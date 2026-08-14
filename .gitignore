@@ -30,6 +30,7 @@ out_*.docx
 scratch/
 outputs/*.docx
 !outputs/Red Herring Prospectus (redacted).docx
+!outputs/Evaluation Strategy and Metrics.docx
 
 # Word lock files, created while a document is open
 ~$*.docx
